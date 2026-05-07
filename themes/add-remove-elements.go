@@ -1,25 +1,45 @@
 package themes
 
 import (
-	"fmt"
 	"log"
 	"selenium/internal/config"
+	"time"
 
 	"github.com/tebeka/selenium"
 )
 
 func AddRemoveElements() {
+	LogTestInfo("Тест Add/Remove Elements", "Начат.")
+
+	time.Sleep(4 * time.Second)
 
 	link, err := config.WD.FindElement(selenium.ByLinkText, "Add/Remove Elements")
 
+	condition := func(wd selenium.WebDriver) (bool, error) {
+		elem, err := wd.FindElement(selenium.ByLinkText, "Add/Remove Elements")
+		if err != nil {
+			return false, nil
+		}
+		return elem.IsDisplayed()
+	}
+
+	err = config.WD.WaitWithTimeout(condition, 5*time.Second)
+
 	if err != nil {
-		log.Fatalf("Ссылка не найдена: %v", err)
+		LogTestError("Timeout", "Ссылка не появилась в течение 10 секунд: %v", err)
+		return
+	}
+
+	if err != nil {
+		LogTestError("Ошибка перехода по ссылке", err.Error())
 	}
 
 	err = link.Click()
 
+	LogTestInfo("Action", "Успешный переход по ссылке")
+
 	if err != nil {
-		log.Fatalf("Ошибка при клике на ссылку: %v", err)
+		LogTestError("Переход по ссылке", "Не удалось перейти по ссылке")
 	}
 
 	addElementBtn, err := config.WD.FindElement(selenium.ByXPATH, "//button[@onclick='addElement()']")
@@ -28,11 +48,14 @@ func AddRemoveElements() {
 		log.Fatalf("Ошибка при поиске кнопки: %v", err)
 	}
 
+	LogTestInfo("Action", "Добавление элементов (5 раз)")
 	for i := 0; i < 5; i++ {
 		err = addElementBtn.Click()
 		if err != nil {
 			log.Fatalf("Ошибка при клике по кнопке: %v", err)
 		}
+		time.Sleep(1 * time.Second)
+		LogStep("Кнопка Add Element нажата")
 	}
 
 	deleteButtons, err := config.WD.FindElements(selenium.ByCSSSelector, ".added-manually")
@@ -41,28 +64,20 @@ func AddRemoveElements() {
 		log.Fatalf("Ошибка поиска кнопок удаления: %v", err)
 	}
 
-	for _, el := range deleteButtons {
-		elementText, err := el.Text()
-		elementType, err := el.TagName()
-
-		if err != nil {
-			log.Fatalf("Ошибка получения текста или типа элемента: %v", err)
-		}
-		fmt.Printf("Найден элемент: %s, текст элемента: %s\n", elementType, elementText)
-	}
-
+	LogTestInfo("Action", "Удаление элементов (5)")
 	for _, el := range deleteButtons {
 		err := el.Click()
-
 		if err != nil {
 			log.Fatalf("Ошибка при нажатии накнопку: %v", err)
 		}
+		time.Sleep(1 * time.Second)
+		LogStep("Кнопка Delete нажата")
 	}
 
 	deleteButtons, err = config.WD.FindElements(selenium.ByCSSSelector, ".added-manually")
 
 	if len(deleteButtons) == 0 {
-		log.Print("Все кнопки удалены!")
+		LogTestPassed("Тест Add/Remove Elements", "Успешно завершен.")
 	}
 
 }

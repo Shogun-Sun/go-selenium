@@ -1,0 +1,13 @@
+services: 
+  selenium: 
+    container_name: selenium-firefox
+    image: selenium/standalone-firefox:latest
+    ports: 
+      - 4444:4444
+      - 7900:7900
+    environment:
+      - http_proxy=http://host.docker.internal:7890
+      - https_proxy=http://host.docker.internal:7890
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
