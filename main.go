@@ -13,4 +13,5 @@ func main() {
 	config.WD.Get("https://the-internet.herokuapp.com/")
 
 	themes.AddRemoveElements()
-}
+	themes.BasicAuth()
+}д

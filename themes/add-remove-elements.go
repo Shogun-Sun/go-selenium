@@ -11,7 +11,7 @@ import (
 func AddRemoveElements() {
 	LogTestInfo("Тест Add/Remove Elements", "Начат.")
 
-	time.Sleep(4 * time.Second)
+	time.Sleep(1 * time.Second)
 
 	link, err := config.WD.FindElement(selenium.ByLinkText, "Add/Remove Elements")
 
@@ -30,17 +30,13 @@ func AddRemoveElements() {
 		return
 	}
 
-	if err != nil {
-		LogTestError("Ошибка перехода по ссылке", err.Error())
-	}
-
 	err = link.Click()
-
-	LogTestInfo("Action", "Успешный переход по ссылке")
 
 	if err != nil {
 		LogTestError("Переход по ссылке", "Не удалось перейти по ссылке")
 	}
+
+	LogTestInfo("Action", "Успешный переход по ссылке")
 
 	addElementBtn, err := config.WD.FindElement(selenium.ByXPATH, "//button[@onclick='addElement()']")
 
@@ -79,5 +75,7 @@ func AddRemoveElements() {
 	if len(deleteButtons) == 0 {
 		LogTestPassed("Тест Add/Remove Elements", "Успешно завершен.")
 	}
+
+	config.WD.Get("https://the-internet.herokuapp.com/")
 
 }
