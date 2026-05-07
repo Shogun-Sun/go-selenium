@@ -9,7 +9,7 @@ import (
 )
 
 func AddRemoveElements() {
-	LogTestInfo("Тест Add/Remove Elements", "Начат.")
+	LogStartTest("Add/Remove Elements")
 
 	time.Sleep(1 * time.Second)
 
@@ -46,12 +46,13 @@ func AddRemoveElements() {
 
 	LogTestInfo("Action", "Добавление элементов (5 раз)")
 	for i := 0; i < 5; i++ {
+		time.Sleep(1 * time.Second)
 		err = addElementBtn.Click()
 		if err != nil {
 			log.Fatalf("Ошибка при клике по кнопке: %v", err)
 		}
-		time.Sleep(1 * time.Second)
-		LogStep("Кнопка Add Element нажата")
+
+		LogStep("Кнопка Add Element %sуспешно нажата%s", colorGreen, colorReset)
 	}
 
 	deleteButtons, err := config.WD.FindElements(selenium.ByCSSSelector, ".added-manually")
@@ -62,12 +63,12 @@ func AddRemoveElements() {
 
 	LogTestInfo("Action", "Удаление элементов (5)")
 	for _, el := range deleteButtons {
+		time.Sleep(1 * time.Second)
 		err := el.Click()
 		if err != nil {
 			log.Fatalf("Ошибка при нажатии накнопку: %v", err)
 		}
-		time.Sleep(1 * time.Second)
-		LogStep("Кнопка Delete нажата")
+		LogStep("Кнопка Delete %sуспешно нажата%s", colorGreen, colorReset)
 	}
 
 	deleteButtons, err = config.WD.FindElements(selenium.ByCSSSelector, ".added-manually")

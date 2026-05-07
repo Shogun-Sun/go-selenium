@@ -9,75 +9,79 @@ import (
 )
 
 func BasicAuth() {
-	LogTestInfo("Тест Basic Auth", "Начат.")
 
-	time.Sleep(1 * time.Second)
+	RunTest("Basic Auth", func() {
 
-	link, err := config.WD.FindElement(selenium.ByLinkText, "Basic Auth")
+		time.Sleep(1 * time.Second)
 
-	if err != nil {
-		LogTestError("Ошибка", "Ссылка не найдена")
-		return
-	}
+		link, err := config.WD.FindElement(selenium.ByLinkText, "Basic Auth")
 
-	url, err := link.GetAttribute("href")
+		if err != nil {
+			LogTestError("Ошибка", "Ссылка не найдена")
+			return
+		}
 
-	if err != nil {
-		LogTestError("Ошибка", "Не удалось получить атрибут href")
-		return
-	}
+		url, err := link.GetAttribute("href")
 
-	url = fmt.Sprintf("https://the-internet.herokuapp.com%s", url)
+		if err != nil {
+			LogTestError("Ошибка", "Не удалось получить атрибут href")
+			return
+		}
 
-	LogTestInfo("Action", "Получена ссылка: %s", url)
+		url = fmt.Sprintf("https://the-internet.herokuapp.com%s", url)
 
-	url = fmt.Sprintf("https://%s:%s@the-internet.herokuapp.com/basic_auth", "admin", "admin")
+		LogTestInfo("Action", "Получена ссылка: %s", url)
 
-	LogTestInfo("Action", "Итоговая ссылка на авторизацию: %s", url)
+		url = fmt.Sprintf("https://%s:%s@the-internet.herokuapp.com/basic_auth", "admin", "admin")
 
-	err = config.WD.Get(url)
+		LogTestInfo("Action", "Итоговая ссылка на авторизацию: %s", url)
 
-	if err != nil {
-		LogTestError("Ошибка", "Не удалось пройти авторизацию: %v", err)
-		return
-	}
+		err = config.WD.Get(url)
 
-	config.WD.Get("https://the-internet.herokuapp.com/basic_auth")
+		if err != nil {
+			LogTestError("Ошибка", "Не удалось пройти авторизацию: %v", err)
+			return
+		}
 
-	element, err := config.WD.FindElement(selenium.ByTagName, "body")
+		config.WD.Get("https://the-internet.herokuapp.com/basic_auth")
 
-	if err != nil {
-		LogTestError("Ошибка", "Тег body не найден")
-		return
-	}
+		element, err := config.WD.FindElement(selenium.ByTagName, "body")
 
-	text, err := element.Text()
+		if err != nil {
+			LogTestError("Ошибка", "Тег body не найден")
+			return
+		}
 
-	if err != nil {
-		LogTestError("Ошибка", "Не удалось получить текст")
-		return
-	}
+		text, err := element.Text()
 
-	if text == "Not authorized" {
-		LogTestError("Ошибка", "Авторизация не пройдена")
-		return
-	}
+		if err != nil {
+			LogTestError("Ошибка", "Не удалось получить текст")
+			return
+		}
 
-	element, err = config.WD.FindElement(selenium.ByTagName, "p")
+		if text == "Not authorized" {
+			LogTestError("Ошибка", "Авторизация не пройдена")
+			return
+		}
 
-	if err != nil {
-		LogTestError("Ошибка", "Тег p не найден")
-		return
-	}
+		element, err = config.WD.FindElement(selenium.ByTagName, "p")
 
-	text, err = element.Text()
+		if err != nil {
+			LogTestError("Ошибка", "Тег p не найден")
+			return
+		}
 
-	if err != nil {
-		LogTestError("Ошибка", "Не удалось получить текст")
-		return
-	}
+		text, err = element.Text()
 
-	LogTestInfo("Action", "Результат авторизации: %s", text)
-	LogTestPassed("Тест Basic Auth", "Авторизация успешно пройдена")
+		if err != nil {
+			LogTestError("Ошибка", "Не удалось получить текст")
+			return
+		}
+
+		LogTestInfo("Action", "Результат авторизации: %s", text)
+
+		config.WD.Get("https://the-internet.herokuapp.com")
+
+	})
 
 }
